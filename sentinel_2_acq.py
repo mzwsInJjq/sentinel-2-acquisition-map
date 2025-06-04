@@ -37,7 +37,7 @@ def fetch_latest_kml_links(url):
         for h4 in soup.find_all('h4'):
             print(f"Found H4 tag: `{h4.text}`")
         exit()
-       """
+        """
 
         for satellite_name in satellites:
             # Find the H4 tag for the current satellite
@@ -191,7 +191,7 @@ if __name__ == "__main__":
             """
 
         # --- Query acquisition plans for a target location before plotting ---
-        # Example: Seattle, WA (lat=47.6062, lon=-122.3321)
+        # Example: Seattle, WA (47.6062, -122.3321)
         location_name, lat, lon = "Seattle, WA", 47.6062, -122.3321
         # location_name, lat, lon = "New York, NY", 40.7143, -74.0060
         print(f"\nQuerying acquisition plans for {location_name} ({lat},{lon})")
