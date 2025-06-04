@@ -89,7 +89,7 @@ def download_and_parse_kml(satellite_name, kml_filename, output_dir):
     local_filepath = os.path.join(output_dir, f"{kml_filename}.kml")
 
     if os.path.exists(local_filepath):
-        print(f"{satellite_name}: {local_filepath} already exists, skipping download.")
+        print(f"\n{satellite_name}: {local_filepath} already exists, skipping download.")
     else:
         print(f"\nDownloading {satellite_name} KML from: {kml_url}")
         try:
@@ -97,19 +97,19 @@ def download_and_parse_kml(satellite_name, kml_filename, output_dir):
             result = subprocess.run([
                 "curl", "-L", "-sS", "-o", local_filepath, kml_url
             ], check=True)
-            print(f"\nDownloaded {satellite_name} KML to: {local_filepath}")
+            print(f"Downloaded {satellite_name} KML to: {local_filepath}")
         except subprocess.CalledProcessError as e:
-            print(f"\nError downloading {satellite_name} KML with curl: {e}")
+            print(f"Error downloading {satellite_name} KML with curl: {e}")
             return None
 
     try:
         # Specify the 'NOMINAL' layer to avoid the warning
         gdf = gpd.read_file(local_filepath, driver='KML', layer='NOMINAL')
         gdf = add_begin_timestamp_to_gdf(local_filepath, gdf)
-        print(f"\nLoaded {satellite_name} KML as GeoDataFrame with {len(gdf)} features.")
+        print(f"Loaded {satellite_name} KML as GeoDataFrame with {len(gdf)} features.")
         return gdf
     except Exception as e:
-        print(f"\nError reading KML for {satellite_name} with geopandas/fiona: {e}")
+        print(f"Error reading KML for {satellite_name} with geopandas/fiona: {e}")
         return None
 
 def add_begin_timestamp_to_gdf(kml_path, gdf):
