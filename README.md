@@ -68,6 +68,6 @@ Sentinel-2C:
 MIT License
 
 ## Acknowledgments
-- [Copernicus Sentinel-2 Mission](https://sentinels.copernicus.eu/web/sentinel/missions/sentinel-2)
+- [Copernicus Sentinel-2 Mission](https://sentinels.copernicus.eu/web/sentinel/copernicus/sentinel-2)
 - [GeoPandas](https://geopandas.org/)
 - [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/)
