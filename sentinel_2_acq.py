@@ -95,7 +95,7 @@ def download_and_parse_kml(satellite_name, kml_filename, output_dir):
         try:
             # Use curl for faster download
             result = subprocess.run([
-                "curl", "-L", "-s", "-o", local_filepath, kml_url
+                "curl", "-L", "-sS", "-o", local_filepath, kml_url
             ], check=True)
             print(f"\nDownloaded {satellite_name} KML to: {local_filepath}")
         except subprocess.CalledProcessError as e:
