@@ -1,6 +1,10 @@
-# Adapted from: https://documentation.dataspace.copernicus.eu/APIs/S3.html#example-script-to-download-product-using-boto3
+"""
+Sentinel-2 Cloudless Image Processor for Seattle AOI
+Automated pipeline: Earth Engine filtering → S3 download → GDAL processing
+Adapted from: https://documentation.dataspace.copernicus.eu/APIs/S3.html#example-script-to-download-product-using-boto3
+"""
 
-# Install apt and pip packages silently
+# Setup Environment
 !pip install pycrs &> /dev/null
 !pip install boto3 leafmap rasterio localtileserver pycrs &> /dev/null
 !apt install gdal-bin &> /dev/null
