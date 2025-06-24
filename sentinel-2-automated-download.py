@@ -1,3 +1,5 @@
+# Adapted from: https://documentation.dataspace.copernicus.eu/APIs/S3.html#example-script-to-download-product-using-boto3
+
 # Install apt and pip packages silently
 !pip install pycrs &> /dev/null
 !pip install boto3 leafmap rasterio localtileserver pycrs &> /dev/null
@@ -59,7 +61,6 @@ def calculate_cloud_cover(image):
 # Apply cloud percentage computation
 sorted_images = sentinel2.map(calculate_cloud_cover)
 
-# Print cloud % info for each image
 image_list = sorted_images.toList(15)
 latest_cloudless_product_id = ''
 
@@ -70,6 +71,7 @@ for i in range(15):
     product_id = props.get('PRODUCT_ID')
     if latest_cloudless_product_id == '' and cloud < 0.1:
         latest_cloudless_product_id = product_id
+        break
 
 if latest_cloudless_product_id != '':
     print(f"Latest Cloudless Product ID: {latest_cloudless_product_id}")
