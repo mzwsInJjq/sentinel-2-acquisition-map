@@ -1,0 +1,9 @@
+pycrs
+boto3
+leafmap
+rasterio
+localtileserver
+geemap
+requests
+geopandas
+earthengine-api
