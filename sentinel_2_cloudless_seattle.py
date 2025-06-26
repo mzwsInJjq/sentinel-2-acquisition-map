@@ -36,7 +36,9 @@ from typing import Union, List
 
 # Download GeoJSON for Seattle AOI
 def download_seattle_geojson():
-    subprocess.run(['curl', '-sSL', 'https://polygons.openstreetmap.fr/get_geojson.py?id=237385&params=0', '-o' , 'seattle.geojson'], check=True)
+    url1 = "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/Places_CouSub_ConCity_SubMCD/MapServer/4/query?objectIds=32408&outSR=32610&f=geojson"
+    url2 = 'https://polygons.openstreetmap.fr/get_geojson.py?id=237385&params=0'
+    subprocess.run(['curl', '-sSL', url1, '-o' , 'seattle.geojson'], check=True)
 
 # Authenticate and initialize Earth Engine
 def authenticate_earth_engine(project):
@@ -157,7 +159,7 @@ def download(bucket, product: str, target: str = "") -> None:
 
 def process_gdalwarp(s3_path, output_path):
     process = subprocess.Popen([
-        'gdalwarp', 
+        'gdalwarp',
         '-overwrite',
         '-of', 'GTiff',
         '-tr', '10.0', '-10.0',
