@@ -5,7 +5,7 @@ This Python script automates the process of fetching, downloading, and visualizi
 ## Features
 - **Automatic KML Discovery:** Scrapes the Copernicus Sentinel-2 acquisition plans page to find the latest KML download links for each satellite.
 - **Efficient Downloading:** Uses `curl` for fast downloads and skips files that are already present locally.
-- **Multi-layer KML Handling:** Loads only the primary 'NOMINAL' layer from KML files to avoid warnings.
+- **Multi-layer KML Handling:** Loads only layers that start with 'NOMINAL' from KML files to focus on relevant acquisition plans.
 - **GeoDataFrame Integration:** Loads KMLs into GeoPandas GeoDataFrames for easy geospatial analysis.
 - **Timestamp Extraction:** Parses each KML to extract the `<begin>` timestamp for each acquisition plan and adds it as a column.
 - **Location Query:** Given a latitude and longitude, prints all acquisition plans (with ID and timestamp) that pass over the location for each satellite.
@@ -60,7 +60,6 @@ Sentinel-2C:
 ```
 
 ## Notes
-- Only the 'NOMINAL' layer of each KML is loaded by default.
 - The script is designed for Windows but should work on Linux/Mac with minor adjustments (ensure `curl` is available).
 - If you want to use this as a module, import as `import sentinel_2_acq` (not with dashes).
 
