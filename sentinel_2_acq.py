@@ -2,7 +2,9 @@ import requests
 from bs4 import BeautifulSoup
 import os
 import re
+import fiona
 import subprocess
+import pandas as pd
 import geopandas as gpd
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
@@ -83,7 +85,7 @@ def fetch_latest_kml_links(url):
 def download_and_parse_kml(satellite_name, kml_filename, output_dir):
     """
     Downloads a KML file using curl. If the file already exists, it will not be redownloaded.
-    Loads the KML file as a GeoDataFrame using geopandas and fiona, specifying the 'NOMINAL' layer.
+    Loads the KML file as a GeoDataFrame using geopandas and fiona, loading all layers.
     """
     kml_url = f"{BASE_URL}{kml_filename}"
     local_filepath = os.path.join(output_dir, f"{kml_filename}.kml")
@@ -103,8 +105,20 @@ def download_and_parse_kml(satellite_name, kml_filename, output_dir):
             return None
 
     try:
-        # Specify the 'NOMINAL' layer to avoid the warning
-        gdf = gpd.read_file(local_filepath, driver='KML', layer='NOMINAL')
+        # Load all layers from the KML file
+        fiona.drvsupport.supported_drivers['KML'] = 'rw'
+        layers = fiona.listlayers(local_filepath)
+        gdf_list = []
+        
+        for layer in layers:
+            # Skip layers that do not start with 'NOMINAL'
+            # This is to avoid loading layers that are not relevant acquisition plans
+            if not layer.startswith('NOMINAL'):
+                continue
+            gdf = gpd.read_file(local_filepath, layer=layer)
+            gdf_list.append(gdf)
+        gdf = pd.concat(gdf_list, ignore_index=True)
+
         gdf = add_begin_timestamp_to_gdf(local_filepath, gdf)
         print(f"Loaded {satellite_name} KML as GeoDataFrame with {len(gdf)} features.")
         return gdf
