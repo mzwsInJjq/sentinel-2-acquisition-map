@@ -7,3 +7,4 @@ geemap
 requests
 geopandas
 earthengine-api
+basemap
