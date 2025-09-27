@@ -9,6 +9,7 @@ import geopandas as gpd
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import xml.etree.ElementTree as ET
+from mpl_toolkits.basemap import Basemap
 
 # Define the URL of the Sentinel-2 Acquisition Plans page
 ACQUISITION_PLANS_URL = "https://sentinels.copernicus.eu/web/sentinel/copernicus/sentinel-2/acquisition-plans"
@@ -215,7 +216,7 @@ if __name__ == "__main__":
             "Chicago, IL": (41.8500, -87.6500)
         }
         for location_name, (lat, lon) in locations.items():
-            print(f"\nAcquisition plans for {location_name} ({lat:.4f},{lon:.4f})") # Avoid truncation
+            print(f"\nAcquisition plans for {location_name} ({lat:.4f}, {lon:.4f})") # Avoid truncation
             find_acq_plans_over_location(lat, lon, kml_data_objects)
 
         # --- Plot all three acquisition plans on a map ---
@@ -226,8 +227,24 @@ if __name__ == "__main__":
         handles = []
         # Plot acquisition-plan layers and build legend handles correctly here
         for idx, (satellite, gdf) in enumerate(kml_data_objects.items()):
-            gdf.plot(ax=ax, color=colors[idx % len(colors)], alpha=0.1, edgecolor='k')
-            handles.append(mpatches.Patch(color=colors[idx % len(colors)], label=satellite.strip(), alpha=0.1))
+            gdf.plot(ax=ax, color=colors[idx % len(colors)], alpha=0.05, edgecolor='k')
+            handles.append(mpatches.Patch(color=colors[idx % len(colors)], label=satellite.strip(), alpha=0.05))
+
+        # Draw coastlines using Basemap for better geographic context
+        try:
+            m = Basemap(projection='cyl',
+                        llcrnrlat=-90, urcrnrlat=90,
+                        llcrnrlon=-180, urcrnrlon=180,
+                        resolution='l',
+                        ax=ax)
+            # Draw coastlines on the axes; choose zorder so coastlines sit between layers and markers
+            m.drawcoastlines(linewidth=0.5, color='black', zorder=2)
+            # If Basemap altered axis limits, reset to global extent for consistency
+            ax.set_xlim(-180, 180)
+            ax.set_ylim(-90, 90)
+        except Exception as e:
+            # If Basemap is unavailable or fails, log and continue (markers/annotations still plot)
+            print(f"Basemap drawing failed: {e}")
 
         # Predefined offset vectors (in points) to reduce overlapping labels; these will be cycled
         offsets = [(0, 10), (10, 10), (-10, 10), (10, -10), (-10, -10), (0, -12)]
