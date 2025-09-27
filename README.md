@@ -47,7 +47,7 @@ pip install geopandas fiona matplotlib beautifulsoup4 lxml requests
 
 ## Example Output
 ```
-Querying acquisition plans for Seattle, WA (47.6062,-122.3321)
+Acquisition plans for Seattle, WA (47.6062,-122.3321)
 Sentinel-2A:
   51948-2       2025-06-02T19:08:23.585
   52134-2       2025-06-15T19:18:26.450
