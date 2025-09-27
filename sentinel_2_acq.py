@@ -34,7 +34,7 @@ def fetch_latest_kml_links(url):
 
         satellites = ["Sentinel-2A", "Sentinel-2B", "Sentinel-2C"]
 
-        # DEBUG: Print all h4 tags to understand the structure
+        # DEBUG: Print all h4 tags to understand the structure of the page
         """
         for h4 in soup.find_all('h4'):
             print(f"Found H4 tag: `{h4.text}`")
@@ -204,23 +204,56 @@ if __name__ == "__main__":
                 print("  No 'Name' or 'name' column found in GeoDataFrame.")
             """
 
-        # --- Query acquisition plans for a target location before plotting ---
-        # Example: Seattle, WA (47.6062, -122.3321)
-        location_name, lat, lon = "Seattle, WA", 47.6062, -122.3321
-        # location_name, lat, lon = "New York, NY", 40.7143, -74.0060
-        print(f"\nQuerying acquisition plans for {location_name} ({lat},{lon})")
-        find_acq_plans_over_location(lat, lon, kml_data_objects)
+        # --- Query acquisition plans for target location(s) before plotting ---
+        # Examples: 
+        # 1. Seattle, WA (47.6062, -122.3321)
+        # 2. New York, NY (40.7143, -74.0060)
+        # 3. Chicago, IL (41.8500, -87.6500)
+        locations = {
+            "Seattle, WA": (47.6062, -122.3321),
+            "New York, NY": (40.7143, -74.0060),
+            "Chicago, IL": (41.8500, -87.6500)
+        }
+        for location_name, (lat, lon) in locations.items():
+            print(f"\nAcquisition plans for {location_name} ({lat:.4f},{lon:.4f})") # Avoid truncation
+            find_acq_plans_over_location(lat, lon, kml_data_objects)
 
-        # --- Plot all three acquisition plans on a map for testing ---
+        # --- Plot all three acquisition plans on a map ---
+        # Also mark the target locations on the map
         plt.figure(figsize=(10, 8))
+        ax = plt.gca()
         colors = ['red', 'green', 'blue']
         handles = []
+        # Plot acquisition-plan layers and build legend handles correctly here
         for idx, (satellite, gdf) in enumerate(kml_data_objects.items()):
-            gdf.plot(ax=plt.gca(), color=colors[idx % len(colors)], alpha=0.2, edgecolor='k')
-            handles.append(mpatches.Patch(color=colors[idx % len(colors)], label=satellite.strip(), alpha=0.2))
-        plt.title('Sentinel-2 Acquisition Plans')
-        plt.xlabel('Longitude')
-        plt.ylabel('Latitude')
+            gdf.plot(ax=ax, color=colors[idx % len(colors)], alpha=0.1, edgecolor='k')
+            handles.append(mpatches.Patch(color=colors[idx % len(colors)], label=satellite.strip(), alpha=0.1))
+
+        # Predefined offset vectors (in points) to reduce overlapping labels; these will be cycled
+        offsets = [(0, 10), (10, 10), (-10, 10), (10, -10), (-10, -10), (0, -12)]
+        marker_color = 'white'
+
+        # Plot each target location and annotate with an offset label
+        for i, (location_name, (lat, lon)) in enumerate(locations.items()):
+            ax.plot(lon, lat, marker='o', color=marker_color, markersize=4)
+            offset = offsets[i % len(offsets)]
+            ann_kwargs = dict(
+                xy=(lon, lat),
+                xytext=offset,
+                textcoords='offset points',
+                fontsize=8,
+                ha='center',
+                va='center',
+                bbox=dict(boxstyle="round,pad=0.2", fc="white", ec="none", alpha=0.6)
+            )
+            # Add a subtle line connecting label to point for offsets that are not directly above
+            if offset != (0, 10):
+                ann_kwargs['arrowprops'] = dict(arrowstyle='-', color='gray', linewidth=0.75, shrinkA=0, shrinkB=0)
+            ax.annotate(location_name.split(",")[0], **ann_kwargs)
+
+        ax.set_title('Sentinel-2 Acquisition Plans')
+        ax.set_xlabel('Longitude')
+        ax.set_ylabel('Latitude')
         plt.tight_layout()
         plt.legend(handles=handles)
         plt.show()
