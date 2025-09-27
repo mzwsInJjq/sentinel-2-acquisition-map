@@ -261,7 +261,7 @@ if __name__ == "__main__":
                 fontsize=8,
                 ha='center',
                 va='center',
-                bbox=dict(boxstyle="round,pad=0.2", fc="white", ec="none", alpha=0.6)
+                bbox=dict(boxstyle="round,pad=0.2", fc="white", ec="none", alpha=0.8)
             )
             # Add a subtle line connecting label to point for offsets that are not directly above
             if offset != (0, 10):
